@@ -1,0 +1,16 @@
+# Foldery tymczasowe Visual Studio
+.vs/
+Debug/
+Release/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Pliki u¿ytkownika
+*.user
+*.suo
+
+# Pliki binarne (opcjonalnie, ale u Ciebie masz plik zapisu)
+smarthome_save.bin
