@@ -8,9 +8,10 @@ bld/
 [Bb]in/
 [Oo]bj/
 
-# Pliki u¿ytkownika
+# Pliki uï¿½ytkownika
 *.user
 *.suo
 
 # Pliki binarne (opcjonalnie, ale u Ciebie masz plik zapisu)
 smarthome_save.bin
+"kolko i krzyzyk.zip"
