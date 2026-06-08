@@ -28,3 +28,7 @@ void SmartLight::setBrightness(int level) {
 int SmartLight::getBrightness() const {
     return brightness;
 }
+
+std::string SmartLight::getDashboardInfo() const {
+    return isOn() ? "[ON]" : "[OFF]";
+}

@@ -8,7 +8,6 @@
 #include <iostream>
 
 void BinarySerializer::saveToFile(const HomeManager& manager, const std::string& filename) {
-    // Otwieramy plik do zapisu (out) w trybie binarnym (binary)
     std::ofstream out(filename, std::ios::binary | std::ios::out);
 
     if (!out.is_open()) {
@@ -17,32 +16,37 @@ void BinarySerializer::saveToFile(const HomeManager& manager, const std::string&
 
     const auto& devices = manager.getDevices();
 
-    // 1. Zapisujemy liczbê urz¹dzeñ
     size_t count = devices.size();
     out.write(reinterpret_cast<const char*>(&count), sizeof(count));
 
-    // 2. Zapisujemy ka¿de urz¹dzenie po kolei
     for (const auto& device : devices) {
-        int type_id = 0; // 1: Lampa, 2: Termostat, 3: Kamera, 4: Zamek
+        int type_id = 0;
 
-        // Rozpoznawanie typu w czasie rzeczywistym
         if (dynamic_cast<SmartLight*>(device.get())) type_id = 1;
         else if (dynamic_cast<Thermostat*>(device.get())) type_id = 2;
         else if (dynamic_cast<SecurityCamera*>(device.get())) type_id = 3;
         else if (dynamic_cast<SmartLock*>(device.get())) type_id = 4;
 
-        // Zapisujemy typ
         out.write(reinterpret_cast<const char*>(&type_id), sizeof(type_id));
 
-        // Zapisujemy d³ugoœæ nazwy i sam¹ nazwê (stringi w plikach binarnych wymagaj¹ d³ugoœci)
         std::string name = device->getName();
         size_t name_len = name.length();
         out.write(reinterpret_cast<const char*>(&name_len), sizeof(name_len));
         out.write(name.c_str(), name_len);
 
-        // Zapisujemy stan w³¹cz/wy³¹cz
         bool is_on = device->isOn();
         out.write(reinterpret_cast<const char*>(&is_on), sizeof(is_on));
+
+        if (type_id == 4) {
+            auto* lock = dynamic_cast<SmartLock*>(device.get());
+            bool is_locked = lock->isLocked();
+            out.write(reinterpret_cast<const char*>(&is_locked), sizeof(is_locked));
+
+            std::string pin = lock->getPinCode();
+            size_t pin_len = pin.length();
+            out.write(reinterpret_cast<const char*>(&pin_len), sizeof(pin_len));
+            out.write(pin.c_str(), pin_len);
+        }
     }
 
     out.close();
@@ -50,7 +54,6 @@ void BinarySerializer::saveToFile(const HomeManager& manager, const std::string&
 }
 
 void BinarySerializer::loadFromFile(HomeManager& manager, const std::string& filename) {
-    // Otwieramy plik do odczytu (in) w trybie binarnym (binary)
     std::ifstream in(filename, std::ios::binary | std::ios::in);
 
     if (!in.is_open()) {
@@ -59,7 +62,6 @@ void BinarySerializer::loadFromFile(HomeManager& manager, const std::string& fil
     }
 
     size_t count = 0;
-    // Odczytujemy liczbê urz¹dzeñ
     if (!in.read(reinterpret_cast<char*>(&count), sizeof(count))) return;
 
     for (size_t i = 0; i < count; ++i) {
@@ -75,19 +77,40 @@ void BinarySerializer::loadFromFile(HomeManager& manager, const std::string& fil
         bool is_on;
         in.read(reinterpret_cast<char*>(&is_on), sizeof(is_on));
 
-        // Odtwarzanie urz¹dzeñ na podstawie typu
+        bool lock_is_locked = true;
+        std::string lock_pin = "1234";
+
+        if (type_id == 4) {
+            in.read(reinterpret_cast<char*>(&lock_is_locked), sizeof(lock_is_locked));
+
+            size_t pin_len;
+            in.read(reinterpret_cast<char*>(&pin_len), sizeof(pin_len));
+            lock_pin.resize(pin_len);
+            in.read(&lock_pin[0], pin_len);
+        }
+
         std::unique_ptr<SmartDevice> new_device;
         switch (type_id) {
         case 1: new_device = std::make_unique<SmartLight>(name); break;
         case 2: new_device = std::make_unique<Thermostat>(name); break;
         case 3: new_device = std::make_unique<SecurityCamera>(name); break;
-        case 4: new_device = std::make_unique<SmartLock>(name, "1234"); break; // Domyœlny PIN przy odtwarzaniu
-        default: continue; // Nieznany typ
+        case 4: new_device = std::make_unique<SmartLock>(name, lock_pin); break;
+        default: continue;
         }
 
-        // Przywracanie stanu
-        if (is_on) new_device->turnOn();
-        else new_device->turnOff();
+        // --- KLUCZOWA ZMIANA ---
+        // Ustawiamy status bazowy zamiast wywo³ywaæ metody turnOn/turnOff
+        new_device->setStatus(is_on);
+
+        if (type_id == 3 && is_on) {
+            auto* cam = dynamic_cast<SecurityCamera*>(new_device.get());
+            if (cam) cam->startRecording();
+        }
+
+        if (type_id == 4) {
+            auto* lock = dynamic_cast<SmartLock*>(new_device.get());
+            if (lock) lock->setLockState(lock_is_locked);
+        }
 
         manager.addDevice(std::move(new_device));
     }

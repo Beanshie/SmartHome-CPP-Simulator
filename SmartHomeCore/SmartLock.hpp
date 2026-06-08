@@ -20,4 +20,10 @@ public:
     void lock();
     void unlock(std::string entered_pin); // Tu bêdziemy rzucaæ wyj¹tek!
     bool isLocked() const;
+
+    // --- NOWE METODY DLA SERIALIZATORA ---
+    std::string getPinCode() const;
+    void setLockState(bool state);
+
+    std::string getDashboardInfo() const override;
 };

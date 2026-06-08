@@ -20,4 +20,6 @@ public:
     void stopRecording();
     bool isRecording() const;
     void setResolution(std::string res);
+
+    std::string getDashboardInfo() const override;
 };

@@ -15,4 +15,6 @@ public:
 
     void setTemperature(double temp);
     double getTemperature() const;
+
+    std::string getDashboardInfo() const override;
 };

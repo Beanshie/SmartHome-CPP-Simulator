@@ -38,6 +38,8 @@ public:
     // jeœli ich w³¹czanie wymaga dodatkowej logiki.
     virtual void setStatus(bool status);
 
+    virtual std::string getDashboardInfo() const = 0;
+
     // Wymóg: Deklaracja przyjaŸni. 
     // Klasa NetworkDiagnostics bêdzie mog³a odczytaæ nasze prywatne pole secret_mac_address.
     friend class NetworkDiagnostics;

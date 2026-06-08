@@ -20,4 +20,5 @@ public:
     // Metody specyficzne tylko dla ¿arówki
     void setBrightness(int level);
     int getBrightness() const;
+    std::string getDashboardInfo() const override;
 };

@@ -6,8 +6,7 @@ SecurityCamera::SecurityCamera(std::string name)
 
 void SecurityCamera::turnOn() {
     setStatus(true);
-    // Domyœlnie w³¹czamy nagrywanie przy starcie kamery
-    startRecording();
+    is_recording = true; // Wymuszamy start, bo skoro wchodzimy w turnOn, to kamera ma dzia³aæ
 }
 
 void SecurityCamera::turnOff() {
@@ -20,6 +19,7 @@ std::string SecurityCamera::getDeviceType() const {
 }
 
 void SecurityCamera::startRecording() {
+    // Tutaj zostawiamy sprawdzenie, bo to jest metoda "u¿ytkowa"
     if (isOn()) {
         is_recording = true;
     }
@@ -35,4 +35,8 @@ bool SecurityCamera::isRecording() const {
 
 void SecurityCamera::setResolution(std::string res) {
     resolution = res;
+}
+
+std::string SecurityCamera::getDashboardInfo() const {
+    return isRecording() ? "[REC]" : "[GOTOWA]";
 }

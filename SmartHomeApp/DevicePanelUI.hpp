@@ -1,25 +1,26 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "SmartDevice.hpp"
-#include "SmartLock.hpp" // Musimy do³¹czyæ konkretne urz¹dzenia
+#include "LockUI.hpp"
+#include "ThermostatUI.hpp"
+#include "CameraUI.hpp"
+#include "LightUI.hpp"
+#include "NetworkDiagnostics.hpp"
 #include <string>
 
 class DevicePanelUI {
 private:
-    std::string current_error_message;
-    std::string entered_pin; // Przechowuje PIN wpisywany na klawiaturze
+    std::string current_message;
+    bool is_error;
 
-    // Prywatne metody do obs³ugi konkretnych urz¹dzeñ (RTTI)
-    void drawLockPanel(SmartLock* lock, sf::RenderWindow& window, sf::Font& font);
-    void handleLockEvent(sf::Event& event, SmartLock* lock, sf::Vector2f clickPos);
+    LockUI lock_ui;
+    ThermostatUI therm_ui;
+    CameraUI camera_ui;
+    LightUI light_ui;
 
 public:
-    DevicePanelUI() = default;
+    DevicePanelUI();
     ~DevicePanelUI() = default;
 
-    // Zmieniamy typ zwracany na int, ¿eby Mened¿er wiedzia³, co zrobiliœmy:
-    // 0 = Nic, 1 = Wstecz, 2 = Usuñ Urz¹dzenie
-    int handleEvent(sf::Event& event, sf::RenderWindow& window, SmartDevice* device);
-
-    void drawPanel(sf::RenderWindow& window, SmartDevice* device, sf::Font& font);
+    // Zwraca 0 (nic), 1 (wstecz), 2 (usun)
+    int render(SmartDevice* device);
 };

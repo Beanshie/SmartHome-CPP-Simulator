@@ -42,3 +42,16 @@ void SmartLock::unlock(std::string entered_pin) {
 bool SmartLock::isLocked() const {
     return is_locked;
 }
+
+// --- NOWE METODY DLA SERIALIZATORA ---
+std::string SmartLock::getPinCode() const {
+    return pin_code;
+}
+
+void SmartLock::setLockState(bool state) {
+    is_locked = state;
+}
+
+std::string SmartLock::getDashboardInfo() const {
+    return isLocked() ? "[ZAMKNIETY]" : "[OTWARTY]";
+}

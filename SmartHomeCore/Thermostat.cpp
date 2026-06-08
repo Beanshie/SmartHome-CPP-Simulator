@@ -29,3 +29,7 @@ void Thermostat::setTemperature(double temp) {
 double Thermostat::getTemperature() const {
     return target_temperature;
 }
+
+std::string Thermostat::getDashboardInfo() const {
+    return std::to_string((int)target_temperature) + " C";
+}
