@@ -37,6 +37,13 @@ void BinarySerializer::saveToFile(const HomeManager& manager, const std::string&
         bool is_on = device->isOn();
         out.write(reinterpret_cast<const char*>(&is_on), sizeof(is_on));
 
+        // --- Zapis jasnosci dla lampki ---
+        if (type_id == 1) {
+            auto* light = dynamic_cast<SmartLight*>(device.get());
+            int brightness = light->getBrightness();
+            out.write(reinterpret_cast<const char*>(&brightness), sizeof(brightness));
+        }
+
         if (type_id == 4) {
             auto* lock = dynamic_cast<SmartLock*>(device.get());
             bool is_locked = lock->isLocked();
@@ -77,6 +84,12 @@ void BinarySerializer::loadFromFile(HomeManager& manager, const std::string& fil
         bool is_on;
         in.read(reinterpret_cast<char*>(&is_on), sizeof(is_on));
 
+        // --- Odczyt jasnosci dla lampki ---
+        int light_brightness = 100; // wartosc domyslna
+        if (type_id == 1) {
+            in.read(reinterpret_cast<char*>(&light_brightness), sizeof(light_brightness));
+        }
+
         bool lock_is_locked = true;
         std::string lock_pin = "1234";
 
@@ -99,8 +112,14 @@ void BinarySerializer::loadFromFile(HomeManager& manager, const std::string& fil
         }
 
         // --- KLUCZOWA ZMIANA ---
-        // Ustawiamy status bazowy zamiast wywo³ywaæ metody turnOn/turnOff
+        // Ustawiamy status bazowy zamiast wywolywac metody turnOn/turnOff
         new_device->setStatus(is_on);
+
+        // --- Ustawienie wczytanej jasnosci ---
+        if (type_id == 1) {
+            auto* light = dynamic_cast<SmartLight*>(new_device.get());
+            if (light) light->setBrightness(light_brightness);
+        }
 
         if (type_id == 3 && is_on) {
             auto* cam = dynamic_cast<SecurityCamera*>(new_device.get());

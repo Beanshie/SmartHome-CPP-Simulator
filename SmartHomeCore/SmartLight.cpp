@@ -20,7 +20,7 @@ std::string SmartLight::getDeviceType() const {
 
 void SmartLight::setBrightness(int level) {
     // Proste zabezpieczenie przed nieprawid³owymi wartoœciami
-    if (level < 0) brightness = 0;
+    if (level < 10) brightness = 10;
     else if (level > 100) brightness = 100;
     else brightness = level;
 }
@@ -30,5 +30,6 @@ int SmartLight::getBrightness() const {
 }
 
 std::string SmartLight::getDashboardInfo() const {
-    return isOn() ? "[ON]" : "[OFF]";
+    // Jeœli w³¹czona, poka¿e np. "[ON 80%]", w przeciwnym razie "[OFF]"
+    return isOn() ? "[ON " + std::to_string(brightness) + "%]" : "[OFF]";
 }
