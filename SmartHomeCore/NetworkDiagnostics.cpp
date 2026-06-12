@@ -1,12 +1,12 @@
 #include "NetworkDiagnostics.hpp"
 #include <iostream>
 
-void NetworkDiagnostics::checkConnection(const SmartDevice& device) {
-    // MAGIA PRZYJAèNI: 
-    // Odwo≥ujemy siÍ do device.secret_mac_address. 
-    // Gdyby ta klasa nie by≥a 'friend', kompilator wyrzuci≥by tutaj b≥πd,
-    // øe prÛbujemy dotknπÊ prywatnego pola.
+// Implementacja modu≥u diagnostyki sieciowej instalacji inteligentnego domu.
+// Wykorzystuje deklaracjÍ przyjaüni do odczytu prywatnych, sprzÍtowych adresÛw MAC urzπdzeÒ.
 
+// Funkcja symulujπca procedurÍ testowania po≥πczenia sieciowego (ping) przy uøyciu ukrytego adresu MAC.
+void NetworkDiagnostics::checkConnection(const SmartDevice& device) {
+    // bezpoúredni odczyt pola prywatnego innej klasy dziÍki relacji friend class
     std::cout << "[Diagnostyka] Pingowanie urzadzenia '" << device.getName()
         << "' pod ukrytym adresem MAC: " << device.secret_mac_address << "...\n";
 
@@ -14,7 +14,8 @@ void NetworkDiagnostics::checkConnection(const SmartDevice& device) {
         << ": bajtow=32 czas=15ms TTL=64 (Polaczenie stabilne)\n";
 }
 
+// Funkcja pobierajπca i zwracajπca zabezpieczony adres MAC sprawdzanego obiektu.
 std::string NetworkDiagnostics::getDeviceMacAddress(const SmartDevice& device) {
-    // Ponownie, swobodny dostÍp do prywatnego pola
+    // bezpieczne przekazanie chronionej wartoúci do wyøszych warstw aplikacji (np. interfejsu GUI)
     return device.secret_mac_address;
 }

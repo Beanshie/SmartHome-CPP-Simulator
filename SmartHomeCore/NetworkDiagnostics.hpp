@@ -3,15 +3,17 @@
 #include "SmartDevice.hpp"
 #include <string>
 
+// Klasa narzêdziowa przeznaczona do symulacji diagnostyki sieciowej urz¹dzeñ.
+// Wykorzystuje mechanizm przyjaŸni oraz polimorfizm do odczytu zabezpieczonych parametrów sprzêtowych.
+
 class SMARTHOME_API NetworkDiagnostics {
 public:
     NetworkDiagnostics() = default;
     ~NetworkDiagnostics() = default;
 
-    // Metoda, która przyjmuje referencjê do dowolnego urz¹dzenia.
-    // Dziêki polimorfizmowi mo¿emy tu przekazaæ ¿arówkê, termostat, zamek, cokolwiek!
+    // Przeprowadzenie weryfikacji po³¹czenia sieciowego dla dowolnego obiektu klasy pochodnej.
     void checkConnection(const SmartDevice& device);
 
-    // Zwraca ukryty adres MAC
+    // Pobranie i sformatowanie adresu MAC przypisanego do sprawdzanego urz¹dzenia.
     std::string getDeviceMacAddress(const SmartDevice& device);
 };

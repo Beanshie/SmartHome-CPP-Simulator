@@ -3,16 +3,17 @@
 #include <exception>
 #include <string>
 
-// Nasza klasa dziedziczy po standardowym wyj¹tku C++ (std::exception)
+// Klasa dedykowanego wyj¹tku dla b³êdów dziedzinowych systemu inteligentnego domu.
+// Dziedziczy po std::exception, umo¿liwiaj¹c standaryzowan¹ obs³ugê b³êdów w blokach try-catch.
+
 class SMARTHOME_API SmartHomeException : public std::exception {
 protected:
     std::string message;
 
 public:
-    // Konstruktor przyjmuj¹cy treœæ b³êdu
+    // Konstruktor jawny tworz¹cy wyj¹tek na podstawie przekazanego komunikatu tekstowego.
     explicit SmartHomeException(const std::string& msg);
 
-    // Nadpisujemy wirtualn¹ metodê what(), aby zwraca³a nasz komunikat.
-    // S³ówko 'noexcept' oznacza, ¿e ta metoda sama w sobie nigdy nie rzuci wyj¹tku.
+    // Nadpisana polimorficzna metoda zwracaj¹ca surowy wskaŸnik do ³añcucha znaków b³êdu.
     const char* what() const noexcept override;
 };

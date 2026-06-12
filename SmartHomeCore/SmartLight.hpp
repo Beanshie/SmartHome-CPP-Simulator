@@ -1,7 +1,9 @@
 #pragma once
 #include "SmartDevice.hpp"
 
-// Dziedziczenie publiczne po naszej klasie bazowej
+// Klasa reprezentuj¹ca inteligentne oœwietlenie (¿arówkê).
+// Rozszerza podstawowe urz¹dzenie o parametryzacjê poziomu jasnoœci w strumieniu procentowym.
+
 class SMARTHOME_API SmartLight : public SmartDevice {
 private:
     int brightness; // Dodatkowa cecha tylko dla ¿arówki (0-100%)
@@ -9,16 +11,20 @@ private:
 public:
     SmartLight(std::string name);
 
-    // Nadpisujemy destruktor
+    // Nadpisany destruktor wirtualny gwarantuj¹cy poprawne zwalnianie zasobów podklasy.
     ~SmartLight() override = default;
 
-    // Wymóg: Override. Kompilator pilnuje, czy na pewno nadpisujemy metody z klasy bazowej.
+    // Nadpisane metody polimorficzne zarz¹dzaj¹ce stanem zasilania oœwietlenia.
     void turnOn() override;
     void turnOff() override;
     std::string getDeviceType() const override;
 
-    // Metody specyficzne tylko dla ¿arówki
+    // Zmiana natê¿enia œwiat³a wraz z automatyczn¹ walidacj¹ poprawnoœci zakresu.
     void setBrightness(int level);
+
+    // Pobranie aktualnego poziomu jasnoœci zapisanego w pamiêci urz¹dzenia.
     int getBrightness() const;
+
+    // Wygenerowanie linii statusowej oœwietlenia przeznaczonej dla g³ównego menu interfejsu.
     std::string getDashboardInfo() const override;
 };

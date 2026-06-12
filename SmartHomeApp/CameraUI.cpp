@@ -1,10 +1,15 @@
 #include "CameraUI.hpp"
 #include "imgui.h"
 
+// Implementacja interfejsu graficznego dla modu³u kamery bezpieczeñstwa.
+// Odpowiada za rysowanie dedykowanych kontrolek i odczyt stanu rejestracji wideo.
+
+// Funkcja renderuj¹ca stan nagrywania oraz przyciski do sterowania prac¹ kamery.
 void CameraUI::render(SecurityCamera* cam) {
     ImGui::Text("Status Kamery: ");
     ImGui::SameLine();
 
+    // sprawdzenie polimorficznego stanu nagrywania
     if (cam->isRecording()) {
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "[ REC ] NAGRYWANIE TRWA");
         ImGui::Spacing();
@@ -15,10 +20,10 @@ void CameraUI::render(SecurityCamera* cam) {
     else {
         ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "W GOTOWOSCI");
         ImGui::Spacing();
-        // --- TU JEST NAPRAWA ---
         if (ImGui::Button("ROZPOCZNIJ NAGRYWANIE", ImVec2(200, 40))) {
-            cam->turnOn();         // Najpierw w³¹cz zasilanie (ustawia isOn na true)
-            cam->startRecording(); // Teraz to zadzia³a, bo isOn() jest true
+            // w³¹czenie zasilania urz¹dzenia przed startem zapisu
+            cam->turnOn();
+            cam->startRecording();
         }
     }
 }
